@@ -8,6 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 from forms_builder.forms.settings import USE_HTML5, EXTRA_FIELDS, EXTRA_WIDGETS
 from forms_builder.forms.utils import html5_field, import_attr
 
+from django.conf import settings
+
+captcha = False
+if 'captcha' in settings.INSTALLED_APPS:
+    from captcha.fields import ReCaptchaField
+    captcha = True
 
 # Constants for all available field types.
 TEXT = 1
@@ -25,6 +31,7 @@ HIDDEN = 12
 NUMBER = 13
 URL = 14
 DOB = 15
+
 
 # Names for all available field types.
 NAMES = (
@@ -63,6 +70,14 @@ CLASSES = {
     NUMBER: forms.FloatField,
     URL: forms.URLField,
 }
+
+if captcha:
+    CAPTCHA = 16
+    NAMES = list(NAMES)
+    NAMES.append((CAPTCHA, _("ReCaptcha")))
+    NAMES = tuple(NAMES)
+    CLASSES[CAPTCHA] = ReCaptchaField
+
 
 # Widgets for field types where a specialised widget is required.
 WIDGETS = {
